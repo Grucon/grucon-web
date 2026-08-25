@@ -104,7 +104,10 @@ export default function DashboardPage() {
           {(rol === 'directiva' || rol === 'directivo') && <VistaDirectiva pipeline={pipeline} />}
           {rol === 'comercial' && <VistaComercial pipeline={pipeline} contactos={contactos} fetchPipeline={fetchPipeline} />}
           {rol === 'cliente' && <VistaCliente perfil={perfil} />}
-          {rol === 'operativo' && <VistaOperativa perfil="{perfil}"/>}
+          {/* 3. VISTA OPERATIVO */}
+          {rol === 'operativo' && (
+            <VistaOperativa perfil={perfil} user={user} />
+          )}
 
         </motion.div>
       </div>
