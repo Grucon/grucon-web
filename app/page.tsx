@@ -56,7 +56,7 @@ export default function Home() {
             className="object-contain block dark:hidden"
           />
           <Image
-            src="/logo_GRUCON_dark.png"
+            src="/Logo_GRUCON_dark.png"
             alt="Logo Grucon"
             width={120}
             height={40}
