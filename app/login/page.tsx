@@ -58,14 +58,6 @@ export default function LoginPage() {
       >
         
         {/* Logos adaptables a modo claro/oscuro */}
-        <div className="flex justify-center mb-8">
-          <Image
-            src="/Logo_GRUCON.png"
-            alt="Logo Grucon"
-            width={180}
-            height={60}
-            className="block dark:hidden object-contain"
-          />
           <Image
             src="/logo_GRUCON_dark.png"
             alt="Logo Grucon"

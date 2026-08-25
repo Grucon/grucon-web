@@ -151,8 +151,13 @@ export default function DashboardPage() {
       
       <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-4">
-          <Image src="/Logo_GRUCON.png" alt="Logo Grucon" width={100} height={30} className="block dark:hidden object-contain" />
-          <Image src="/logo_GRUCON_dark.png" alt="Logo Grucon" width={100} height={30} className="hidden dark:block object-contain" />
+          <Image 
+            src="/logo_GRUCON_dark.png" 
+            alt="Logo Grucon" 
+            width={120} 
+            height={40} 
+            className="object-contain" 
+          />
           <span className="hidden md:inline-block px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-full uppercase tracking-wider">
             Portal de Usuarios
           </span>
