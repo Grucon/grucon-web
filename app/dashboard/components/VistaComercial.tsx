@@ -7,6 +7,10 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function VistaComercial({ pipeline, contactos, fetchPipeline }: { pipeline: any[], contactos: any[], fetchPipeline: () => void }) {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'registro'>('dashboard');
   const [filtroLinea, setFiltroLinea] = useState<string>('Todas');
+  
+  // NUEVO: Estado para saber si estamos editando un ID específico
+  const [editingId, setEditingId] = useState<number | null>(null);
+  
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -16,26 +20,91 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
 
   const lineasDeNegocio = ['Todas', 'Consultoría', 'Interventoría', 'Gerencia de Proyectos', 'Grucon Energy (Desarrollo de PCHs)', 'Innovación'];
 
-  const handleSubmitProyecto = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    const { error } = await supabase.from('pipeline_com').insert([{
-        proyecto: formData.proyecto, entidad: formData.entidad, servicio: formData.servicio,
-        valor: formData.valor ? parseFloat(formData.valor) : null,
-        duracion: formData.duracion ? parseInt(formData.duracion) : null,
-        etapa: formData.etapa, estado: formData.estado,
-        contacto_id: formData.contacto_id ? parseInt(formData.contacto_id) : null 
-    }]);
-    setIsSubmitting(false);
-    if (error) {
-      alert("Hubo un error al guardar el proyecto.");
-    } else {
-      setFormData({ proyecto: "", entidad: "", contacto_id: "", servicio: "Consultoría", valor: "", duracion: "", etapa: "Nuevo", estado: "En progreso" });
-      setShowModal(false);
-      fetchPipeline(); 
+  // NUEVO: Función para limpiar y cerrar el formulario
+  const resetForm = () => {
+    setEditingId(null);
+    setFormData({ proyecto: "", entidad: "", contacto_id: "", servicio: "Consultoría", valor: "", duracion: "", etapa: "Nuevo", estado: "En progreso" });
+    setShowModal(false);
+  };
+
+  // NUEVO: Función que se ejecuta al hacer clic en "Editar" en la tabla
+  const handleEditClick = (item: any) => {
+    setEditingId(item.id);
+    setFormData({
+      proyecto: item.proyecto || "",
+      entidad: item.entidad || "",
+      contacto_id: item.contacto_id ? item.contacto_id.toString() : "",
+      servicio: item.servicio || "Consultoría",
+      valor: item.valor ? item.valor.toString() : "",
+      duracion: item.duracion ? item.duracion.toString() : "",
+      etapa: item.etapa || "Nuevo",
+      estado: item.estado || "En progreso"
+    });
+    setShowModal(true); // Abrimos el modal con los datos cargados
+  };
+
+  // NUEVO: Función que se ejecuta al hacer clic en "Eliminar" en la tabla
+  const handleDeleteClick = async (id: number) => {
+    // Pedimos confirmación para evitar borrados accidentales
+    if (window.confirm("¿Estás seguro de que deseas eliminar este registro? Esta acción no se puede deshacer.")) {
+      const { error } = await supabase
+        .from('pipeline_com')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        alert("Hubo un error al eliminar el proyecto.");
+        console.error(error.message);
+      } else {
+        fetchPipeline(); // Recarga la tabla silenciosamente tras borrar
+      }
     }
   };
 
+  const handleSubmitProyecto = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Preparamos los datos limpios para la base de datos
+    const payload = {
+        proyecto: formData.proyecto, 
+        entidad: formData.entidad, 
+        servicio: formData.servicio,
+        valor: formData.valor ? parseFloat(formData.valor) : null,
+        duracion: formData.duracion ? parseInt(formData.duracion) : null,
+        etapa: formData.etapa, 
+        estado: formData.estado,
+        contacto_id: formData.contacto_id ? parseInt(formData.contacto_id) : null 
+    };
+
+    let error;
+
+    // NUEVO: Lógica condicional (Si hay un ID, actualiza. Si no, inserta nuevo)
+    if (editingId) {
+      const { error: updateError } = await supabase
+        .from('pipeline_com')
+        .update(payload)
+        .eq('id', editingId);
+      error = updateError;
+    } else {
+      const { error: insertError } = await supabase
+        .from('pipeline_com')
+        .insert([payload]);
+      error = insertError;
+    }
+
+    setIsSubmitting(false);
+
+    if (error) {
+      alert("Hubo un error al guardar el proyecto.");
+      console.error(error.message);
+    } else {
+      resetForm();
+      fetchPipeline(); // Recarga la tabla silenciosamente
+    }
+  };
+
+  // ... (Aquí continúa la lógica matemática del pipelineFiltrado que ya tienes)
   const pipelineFiltrado = filtroLinea === 'Todas' ? pipeline : pipeline.filter(p => p.servicio === filtroLinea);
   const contratosGanados = pipelineFiltrado.filter(p => p.estado?.toLowerCase() === 'ganado');
   const leadsEnProceso = pipelineFiltrado.filter(p => p.estado?.toLowerCase() !== 'ganado' && p.estado?.toLowerCase() !== 'perdido');
@@ -45,11 +114,9 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
   const numLeads = leadsEnProceso.length;
   const valorLeads = leadsEnProceso.reduce((acc, curr) => acc + (Number(curr.valor) || 0), 0);
   const numClientesUnicos = new Set(pipelineFiltrado.map(p => p.entidad).filter(Boolean)).size;
+  const numPaises = 3; 
   
   const formatearDinero = (valor: number) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(valor);
-
-  const numPaises = 3; // <- ¡Agrega esta línea! (Estático por ahora)
-
   
   return (
     <div>
@@ -136,14 +203,15 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
                     <th className="px-6 py-4 font-semibold">Servicio</th>
                     <th className="px-6 py-4 font-semibold">Finanzas</th>
                     <th className="px-6 py-4 font-semibold">Tiempo / Etapa</th>
-                    <th className="px-6 py-4 font-semibold">Contacto Externo</th>
+                    <th className="px-6 py-4 font-semibold">Contacto </th>
                     <th className="px-6 py-4 font-semibold">Estado</th>
+                    <th className="px-6 py-4 font-semibold text-right">Acciones</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
                   {pipelineFiltrado.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                      <td colSpan={7} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                         No hay registros que coincidan con esta línea de negocio.
                       </td>
                     </tr>
@@ -178,6 +246,24 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
                             {item.estado || 'En progreso'}
                           </span>
                         </td>
+
+                        <td className="px-6 py-4 text-right">
+                                  <div className="flex justify-end gap-3 items-center">
+                            <button 
+                                onClick={() => handleEditClick(item)} 
+                                className="text-emerald-600 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300 text-sm font-medium transition-colors"
+                            >
+                                Editar
+                            </button>
+                            <button 
+                                onClick={() => handleDeleteClick(item.id)} 
+                                className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium transition-colors"
+                            >
+                                Eliminar
+                            </button>
+                            </div>
+                        </td>
+                
                       </tr>
                     ))
                   )}
@@ -217,7 +303,7 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
                   </div>
                   
                   <div className="col-span-2">
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Contacto Externo</label>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Contacto </label>
                     <select value={formData.contacto_id} onChange={(e) => setFormData({...formData, contacto_id: e.target.value})} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
                       <option value="">Sin asignar (Opcional)</option>
                       {contactos?.map((contacto) => (

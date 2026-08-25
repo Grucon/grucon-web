@@ -10,6 +10,7 @@ import Image from "next/image";
 import VistaComercial from "./components/VistaComercial";
 import VistaDirectiva from "./components/VistaDirectiva";
 import VistaCliente from "./components/VistaCliente";
+import VistaOperativa from "./components/VistaOperativa";
 
 export default function DashboardPage() {
   const [user, setUser] = useState<any>(null);
@@ -68,6 +69,14 @@ export default function DashboardPage() {
            />
         </div>
         <div className="flex items-center gap-4">
+          {['comercial', 'directiva', 'directivo'].includes(rol) && (
+            <button 
+              onClick={() => router.push("/dashboard/directorio")} 
+              className="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors hidden md:block"
+            >
+              Ver Directorio
+            </button>
+          )}
           <div className="text-right hidden md:block">
             <p className="text-sm font-semibold text-slate-900 dark:text-white">
               {perfil?.nombre_completo}
@@ -95,6 +104,7 @@ export default function DashboardPage() {
           {(rol === 'directiva' || rol === 'directivo') && <VistaDirectiva pipeline={pipeline} />}
           {rol === 'comercial' && <VistaComercial pipeline={pipeline} contactos={contactos} fetchPipeline={fetchPipeline} />}
           {rol === 'cliente' && <VistaCliente perfil={perfil} />}
+          {rol === 'operativo' && <VistaOperativa perfil="{perfil}"/>}
 
         </motion.div>
       </div>
