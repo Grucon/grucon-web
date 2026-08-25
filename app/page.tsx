@@ -48,20 +48,20 @@ export default function Home() {
           transition={{ duration: 0.6 }}
           className="flex items-center"
         >
-          <Image
-            src="/Logo_GRUCON.png"
-            alt="Logo Grucon"
-            width={120}
-            height={40}
-            className="object-contain block dark:hidden"
-          />
-          <Image
-            src="/Logo_GRUCON_dark.png"
-            alt="Logo Grucon"
-            width={120}
-            height={40}
-            className="object-contain hidden dark:block"
-          />
+          {/* Logo en la Barra de Navegación del Dashboard */}
+          <div className="flex items-center gap-4">
+            <Image
+              src="/Logo_GRUCON_dark.png"
+              alt="Logo Grucon"
+              width={100}
+              height={30}
+              priority
+              className="object-contain"
+            />
+            <span className="hidden md:inline-block px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-full uppercase tracking-wider">
+              Portal de Usuarios
+            </span>
+          </div>
         </motion.div>
 
         {/* Botón Inteligente */}
