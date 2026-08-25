@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function VistaComercial({ pipeline, contactos, fetchPipeline }: { pipeline: any[], contactos: any[], fetchPipeline: () => void }) {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'registro'>('dashboard');
   const [filtroLinea, setFiltroLinea] = useState<string>('Todas');
+  const [filtroEstado, setFiltroEstado] = useState<string>('Todos');
   
   // NUEVO: Estado para saber si estamos editando un ID específico
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -105,7 +106,11 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
   };
 
   // ... (Aquí continúa la lógica matemática del pipelineFiltrado que ya tienes)
-  const pipelineFiltrado = filtroLinea === 'Todas' ? pipeline : pipeline.filter(p => p.servicio === filtroLinea);
+  const pipelineFiltrado = pipeline.filter(p => {
+    const matchServicio = filtroLinea === 'Todas' || p.servicio === filtroLinea;
+    const matchEstado = filtroEstado === 'Todos' || p.estado === filtroEstado;
+    return matchServicio && matchEstado;
+  });
   const contratosGanados = pipelineFiltrado.filter(p => p.estado?.toLowerCase() === 'ganado');
   const leadsEnProceso = pipelineFiltrado.filter(p => p.estado?.toLowerCase() !== 'ganado' && p.estado?.toLowerCase() !== 'perdido');
 
@@ -194,6 +199,37 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
       {/* CONTENIDO PESTAÑA 2: TABLERO DE REGISTRO */}
       {activeTab === 'registro' && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+            <div className="flex flex-col md:flex-row gap-6 mb-6 p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
+                    <div className="flex-1">
+                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Filtrar por Servicio</label>
+                      <select 
+                        value={filtroLinea} 
+                        onChange={(e) => setFiltroLinea(e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                      >
+                        {lineasDeNegocio.map(linea => (
+                          <option key={linea} value={linea}>{linea === 'Todas' ? 'Todos los servicios' : linea}</option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div className="flex-1">
+                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Filtrar por Estado</label>
+                      <select 
+                        value={filtroEstado} 
+                        onChange={(e) => setFiltroEstado(e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                      >
+                        <option value="Todos">Todos los estados</option>
+                        <option value="Lead">Lead</option>
+                        <option value="Publicado">Publicado</option>
+                        <option value="Persiguiendo">Persiguiendo</option>
+                        <option value="Presentado">Presentado</option>
+                        <option value="Ganado">Ganado</option>
+                        <option value="Perdido">Perdido</option>
+                      </select>
+                    </div>
+                  </div>
           <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
@@ -338,9 +374,21 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Etapa Comercial</label>
                     <select value={formData.etapa} onChange={(e) => setFormData({...formData, etapa: e.target.value})} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
                       <option>Nuevo</option>
-                      <option>Contactado</option>
-                      <option>Cotizado</option>
-                      <option>En Negociación</option>
+                      <option>Pliegos Borrador</option>
+                      <option>Pliegos Definitivos</option>
+                      <option>Evaluación</option>
+                      <option>Adjudicado</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Estado del Proyecto</label>
+                    <select value={formData.estado} onChange={(e) => setFormData({...formData, estado: e.target.value})} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                      <option value="Lead">Lead</option>
+                      <option value="Publicado">Publicado</option>
+                      <option value="Persiguiendo">Persiguiendo</option>
+                      <option value="Presentado">Presentado</option>
+                      <option value="Ganado">Ganado</option>
+                      <option value="Perdido">Perdido</option>
                     </select>
                   </div>
                 </div>
