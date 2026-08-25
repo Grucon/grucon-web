@@ -58,15 +58,13 @@ export default function LoginPage() {
       >
         
         {/* Logo corporativo (Versión oscura permanente) */}
-        <div className="flex justify-center mb-8">
-          <Image
-            src="/logo_GRUCON_dark.png"
-            alt="Logo Grucon"
-            width={180}
-            height={60}
-            className="object-contain"
-          />
-        </div>
+        <Image
+          src="/Logo_GRUCON_dark.png" /* <-- ¡Asegúrate de que la L sea mayúscula! */
+          alt="Logo Grucon"
+          width={180}
+          height={60}
+          className="object-contain"
+        />
 
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Portal de Usuarios</h2>
