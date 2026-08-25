@@ -111,14 +111,6 @@ export default function Home() {
           className="relative mb-10"
         >
           <Image
-            src="/Logo_GRUCON.png"
-            alt="Logo Grucon Ingeniería"
-            width={280} 
-            height={120} 
-            priority 
-            className="object-contain block dark:hidden"
-          />
-          <Image
             src="/logo_GRUCON_dark.png" 
             alt="Logo Grucon Ingeniería"
             width={280} 

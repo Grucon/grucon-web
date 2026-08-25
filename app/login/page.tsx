@@ -57,13 +57,14 @@ export default function LoginPage() {
         className="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 p-8"
       >
         
-        {/* Logos adaptables a modo claro/oscuro */}
+        {/* Logo corporativo (Versión oscura permanente) */}
+        <div className="flex justify-center mb-8">
           <Image
             src="/logo_GRUCON_dark.png"
             alt="Logo Grucon"
             width={180}
             height={60}
-            className="hidden dark:block object-contain"
+            className="object-contain"
           />
         </div>
 
