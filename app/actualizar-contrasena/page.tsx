@@ -51,12 +51,12 @@ export default function ActualizarContrasenaPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 transition-colors duration-300 p-6">
+    <main className="min-h-screen flex items-center justify-center bg-slate-50 bg-slate-900 transition-colors duration-300 p-6">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 p-8"
+        className="w-full max-w-md  bg-slate-800 rounded-2xl shadow-xl border border-slate-100 border-slate-700 p-8"
       >
         {/* Logos adaptables a modo claro/oscuro */}
         <div className="flex justify-center mb-8">
@@ -65,20 +65,20 @@ export default function ActualizarContrasenaPage() {
             alt="Logo Grucon"
             width={180}
             height={60}
-            className="block dark:hidden object-contain"
+            className="block hidden object-contain"
           />
           <Image
             src="/logo_GRUCON_dark.png"
             alt="Logo Grucon"
             width={180}
             height={60}
-            className="hidden dark:block object-contain"
+            className="hidden block object-contain"
           />
         </div>
 
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Crear Nueva Contraseña</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+          <h2 className="text-2xl font-bold text-slate-900 text-white">Crear Nueva Contraseña</h2>
+          <p className="text-sm text-slate-500 text-slate-400 mt-2">
             Ingresa tu nueva contraseña para acceder al Portal de Usuarios.
           </p>
         </div>
@@ -86,12 +86,12 @@ export default function ActualizarContrasenaPage() {
         {success ? (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="text-center bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 p-4 rounded-lg"
+            className="text-center bg-emerald-50 bg-emerald-900/20 border border-emerald-200 border-emerald-800 p-4 rounded-lg"
           >
-            <p className="text-emerald-700 dark:text-emerald-400 font-medium">
+            <p className="text-emerald-700 text-emerald-400 font-medium">
               ¡Contraseña actualizada con éxito!
             </p>
-            <p className="text-sm text-emerald-600 dark:text-emerald-500 mt-1">
+            <p className="text-sm text-emerald-600 text-emerald-500 mt-1">
               Redirigiendo a tu panel...
             </p>
           </motion.div>
@@ -99,7 +99,7 @@ export default function ActualizarContrasenaPage() {
           <form onSubmit={handleUpdatePassword} className="space-y-6">
             
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-slate-700 text-slate-300 mb-2">
                 Nueva Contraseña
               </label>
               <input
@@ -107,13 +107,13 @@ export default function ActualizarContrasenaPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-slate-900 dark:text-white"
+                className="w-full px-4 py-3 rounded-lg bg-slate-50 bg-slate-900 border border-slate-200 border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-slate-900 text-white"
                 placeholder="••••••••"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-slate-700 text-slate-300 mb-2">
                 Confirmar Contraseña
               </label>
               <input
@@ -121,7 +121,7 @@ export default function ActualizarContrasenaPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-slate-900 dark:text-white"
+                className="w-full px-4 py-3 rounded-lg bg-slate-50 bg-slate-900 border border-slate-200 border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-slate-900 text-white"
                 placeholder="••••••••"
               />
             </div>
@@ -129,7 +129,7 @@ export default function ActualizarContrasenaPage() {
             {error && (
               <motion.p 
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                className="text-red-500 text-sm text-center bg-red-50 dark:bg-red-900/20 py-2 rounded-lg"
+                className="text-red-500 text-sm text-center bg-red-50 bg-red-900/20 py-2 rounded-lg"
               >
                 {error}
               </motion.p>

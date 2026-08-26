@@ -127,15 +127,15 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
     <div>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Entorno Comercial</h1>
-          <p className="text-slate-600 dark:text-slate-400">Monitoreo estratégico y tablero de registro.</p>
+          <h1 className="text-3xl font-bold text-slate-900 text-white mb-2">Entorno Comercial</h1>
+          <p className="text-slate-600 text-slate-400">Monitoreo estratégico y tablero de registro.</p>
         </div>
         <button onClick={() => setShowModal(true)} className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors shadow-md">
           Añadir Registro
         </button>
       </div>
 
-      <div className="flex gap-6 border-b border-slate-200 dark:border-slate-700 mb-8">
+      <div className="flex gap-6 border-b border-slate-200 border-slate-700 mb-8">
         <button onClick={() => setActiveTab('dashboard')} className={`pb-4 text-sm font-medium transition-colors border-b-2 ${activeTab === 'dashboard' ? 'border-emerald-600 text-emerald-700' : 'border-transparent text-slate-500'}`}>Dashboard Comercial</button>
         <button onClick={() => setActiveTab('registro')} className={`pb-4 text-sm font-medium transition-colors border-b-2 ${activeTab === 'registro' ? 'border-emerald-600 text-emerald-700' : 'border-transparent text-slate-500'}`}>Tablero de Registro</button>
       </div>
@@ -150,7 +150,7 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
                 className={`px-4 py-2.5 rounded-lg text-sm font-medium border transition-all shadow-sm
                   ${filtroLinea === linea 
                     ? 'bg-emerald-600 text-white border-emerald-600 shadow-emerald-500/30' 
-                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 dark:hover:bg-emerald-900/30 dark:hover:text-emerald-400 dark:hover:border-emerald-800' 
+                    : 'bg-slate-800 text-slate-700 text-slate-300 border-slate-200 border-slate-700 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 hover:bg-emerald-900/30 hover:text-emerald-400 hover:border-emerald-800' 
                   }
                 `}
               >
@@ -163,34 +163,34 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
           </h2>
           
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700">
-              <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400">Contratos Adjudicados</h3>
-              <p className="text-3xl font-bold text-slate-900 dark:text-white mt-2">{numContratos}</p>
+            <div className="p-6 rounded-xl bg-slate-50 bg-slate-900/50 border border-slate-100 border-slate-700">
+              <h3 className="text-sm font-medium text-slate-500 text-slate-400">Contratos Adjudicados</h3>
+              <p className="text-3xl font-bold text-slate-900 text-white mt-2">{numContratos}</p>
             </div>
             
-            <div className="p-6 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/50">
-              <h3 className="text-sm font-medium text-emerald-900 dark:text-emerald-100">Valor Adjudicado</h3>
-              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-2">{formatearDinero(valorContratos)}</p>
+            <div className="p-6 rounded-xl bg-emerald-50 bg-emerald-900/20 border border-emerald-100 border-emerald-900/50">
+              <h3 className="text-sm font-medium text-emerald-900 text-emerald-100">Valor Adjudicado</h3>
+              <p className="text-2xl font-bold text-emerald-600 text-emerald-400 mt-2">{formatearDinero(valorContratos)}</p>
             </div>
             
-            <div className="p-6 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700">
-              <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400">Leads Activas</h3>
-              <p className="text-3xl font-bold text-slate-900 dark:text-white mt-2">{numLeads}</p>
+            <div className="p-6 rounded-xl bg-slate-50 bg-slate-900/50 border border-slate-100 border-slate-700">
+              <h3 className="text-sm font-medium text-slate-500 text-slate-400">Leads Activas</h3>
+              <p className="text-3xl font-bold text-slate-900 text-white mt-2">{numLeads}</p>
             </div>
             
-            <div className="p-6 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-900/50">
-              <h3 className="text-sm font-medium text-amber-900 dark:text-amber-100">Valor de Leads Activas</h3>
-              <p className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-2">{formatearDinero(valorLeads)}</p>
+            <div className="p-6 rounded-xl bg-amber-50 bg-amber-900/20 border border-amber-100 border-amber-900/50">
+              <h3 className="text-sm font-medium text-amber-900 text-amber-100">Valor de Leads Activas</h3>
+              <p className="text-2xl font-bold text-amber-600 text-amber-400 mt-2">{formatearDinero(valorLeads)}</p>
             </div>
             
-            <div className="p-6 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700">
-              <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400">Número de Clientes</h3>
-              <p className="text-3xl font-bold text-slate-900 dark:text-white mt-2">{numClientesUnicos}</p>
+            <div className="p-6 rounded-xl bg-slate-50 bg-slate-900/50 border border-slate-100 border-slate-700">
+              <h3 className="text-sm font-medium text-slate-500 text-slate-400">Número de Clientes</h3>
+              <p className="text-3xl font-bold text-slate-900 text-white mt-2">{numClientesUnicos}</p>
             </div>
             
-            <div className="p-6 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700">
-              <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400">Países</h3>
-              <p className="text-3xl font-bold text-slate-900 dark:text-white mt-2">{numPaises}</p>
+            <div className="p-6 rounded-xl bg-slate-50 bg-slate-900/50 border border-slate-100 border-slate-700">
+              <h3 className="text-sm font-medium text-slate-500 text-slate-400">Países</h3>
+              <p className="text-3xl font-bold text-slate-900 text-white mt-2">{numPaises}</p>
             </div>
           </div>
         </motion.div>
@@ -199,13 +199,13 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
       {/* CONTENIDO PESTAÑA 2: TABLERO DE REGISTRO */}
       {activeTab === 'registro' && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-            <div className="flex flex-col md:flex-row gap-6 mb-6 p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
+            <div className="flex flex-col md:flex-row gap-6 mb-6 p-4 bg-slate-800 border border-slate-200 border-slate-700 rounded-xl">
                     <div className="flex-1">
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Filtrar por Servicio</label>
                       <select 
                         value={filtroLinea} 
                         onChange={(e) => setFiltroLinea(e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                        className="w-full px-3 py-2 border border-slate-300 border-slate-600 rounded-lg bg-slate-50 bg-slate-700 text-slate-900 text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                       >
                         {lineasDeNegocio.map(linea => (
                           <option key={linea} value={linea}>{linea === 'Todas' ? 'Todos los servicios' : linea}</option>
@@ -218,7 +218,7 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
                       <select 
                         value={filtroEstado} 
                         onChange={(e) => setFiltroEstado(e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                        className="w-full px-3 py-2 border border-slate-300 border-slate-600 rounded-lg bg-slate-50 bg-slate-700 text-slate-900 text-white text-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                       >
                         <option value="Todos">Todos los estados</option>
                         <option value="Lead">Lead</option>
@@ -230,11 +230,11 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
                       </select>
                     </div>
                   </div>
-          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+          <div className="bg-slate-800 border border-slate-200 border-slate-700 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
+                  <tr className="text-xs uppercase tracking-wider text-slate-500 text-slate-400 border-b border-slate-200 border-slate-700 bg-slate-50 bg-slate-900/50">
                     <th className="px-6 py-4 font-semibold">Proyecto / Entidad</th>
                     <th className="px-6 py-4 font-semibold">Servicio</th>
                     <th className="px-6 py-4 font-semibold">Finanzas</th>
@@ -244,40 +244,40 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
                     <th className="px-6 py-4 font-semibold text-right">Acciones</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
+                <tbody className="divide-y divide-slate-100 divide-slate-700/50">
                   {pipelineFiltrado.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                      <td colSpan={7} className="px-6 py-8 text-center text-slate-500 text-slate-400">
                         No hay registros que coincidan con esta línea de negocio.
                       </td>
                     </tr>
                   ) : (
                     pipelineFiltrado.map((item) => (
-                      <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/20 transition-colors">
+                      <tr key={item.id} className="hover:bg-slate-50 hover:bg-slate-700/20 transition-colors">
                         <td className="px-6 py-4">
-                          <p className="font-semibold text-slate-900 dark:text-white">{item.proyecto || 'Sin nombre'}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">{item.entidad || 'Entidad no especificada'}</p>
+                          <p className="font-semibold text-slate-900 text-white">{item.proyecto || 'Sin nombre'}</p>
+                          <p className="text-xs text-slate-500 text-slate-400">{item.entidad || 'Entidad no especificada'}</p>
                         </td>
-                        <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+                        <td className="px-6 py-4 text-sm text-slate-600 text-slate-300">
                           {item.servicio}
                         </td>
                         <td className="px-6 py-4">
-                          <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                          <p className="text-sm font-medium text-slate-700 text-slate-300">
                             {item.valor ? formatearDinero(item.valor) : 'Por definir'}
                           </p>
                         </td>
-                        <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+                        <td className="px-6 py-4 text-sm text-slate-600 text-slate-300">
                           <p className="font-medium">{item.etapa || 'Inicial'}</p>
-                          {item.duracion && <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">Duración: {item.duracion} meses</p>}
+                          {item.duracion && <p className="text-xs text-emerald-600 text-emerald-400 mt-0.5">Duración: {item.duracion} meses</p>}
                         </td>
-                        <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
-                          <p className="font-medium text-slate-900 dark:text-white">
+                        <td className="px-6 py-4 text-sm text-slate-600 text-slate-300">
+                          <p className="font-medium text-slate-900 text-white">
                             {item.contacto_externo?.nombre_completo || 'Sin asignar'}
                           </p>
                         </td>
                         <td className="px-6 py-4">
                           <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border
-                            ${item.estado?.toLowerCase() === 'ganado' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800' : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800'}
+                            ${item.estado?.toLowerCase() === 'ganado' ? 'bg-emerald-50 text-emerald-700 border-emerald-200 bg-emerald-900/30 text-emerald-400 border-emerald-800' : 'bg-amber-50 text-amber-700 border-amber-200 bg-amber-900/30 text-amber-400 border-amber-800'}
                           `}>
                             {item.estado || 'En progreso'}
                           </span>
@@ -287,13 +287,13 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
                                   <div className="flex justify-end gap-3 items-center">
                             <button 
                                 onClick={() => handleEditClick(item)} 
-                                className="text-emerald-600 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300 text-sm font-medium transition-colors"
+                                className="text-emerald-600 hover:text-emerald-800 text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-colors"
                             >
                                 Editar
                             </button>
                             <button 
                                 onClick={() => handleDeleteClick(item.id)} 
-                                className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-sm font-medium transition-colors"
+                                className="text-red-500 hover:text-red-700 text-red-400 hover:text-red-300 text-sm font-medium transition-colors"
                             >
                                 Eliminar
                             </button>
@@ -318,11 +318,11 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-lg overflow-hidden"
+              className="bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 border-slate-700 w-full max-w-lg overflow-hidden"
             >
-              <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-900/50">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Nuevo Registro Comercial</h3>
-                <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+              <div className="px-6 py-4 border-b border-slate-200 border-slate-700 flex justify-between items-center bg-slate-50 bg-slate-900/50">
+                <h3 className="text-lg font-bold text-slate-900 text-white">Nuevo Registro Comercial</h3>
+                <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 hover:text-slate-200">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
@@ -330,17 +330,17 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
               <form onSubmit={handleSubmitProyecto} className="p-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nombre del Proyecto</label>
-                    <input type="text" required value={formData.proyecto} onChange={(e) => setFormData({...formData, proyecto: e.target.value})} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej. Edificio Norte" />
+                    <label className="block text-sm font-medium text-slate-700 text-slate-300 mb-1">Nombre del Proyecto</label>
+                    <input type="text" required value={formData.proyecto} onChange={(e) => setFormData({...formData, proyecto: e.target.value})} className="w-full px-3 py-2 border border-slate-300 border-slate-600 rounded-lg bg-slate-700 text-slate-900 text-white focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej. Edificio Norte" />
                   </div>
                   <div className="col-span-2">
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Entidad / Empresa</label>
-                    <input type="text" value={formData.entidad} onChange={(e) => setFormData({...formData, entidad: e.target.value})} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej. Constructora Alfa" />
+                    <label className="block text-sm font-medium text-slate-700 text-slate-300 mb-1">Entidad / Empresa</label>
+                    <input type="text" value={formData.entidad} onChange={(e) => setFormData({...formData, entidad: e.target.value})} className="w-full px-3 py-2 border border-slate-300 border-slate-600 rounded-lg bg-slate-700 text-slate-900 text-white focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej. Constructora Alfa" />
                   </div>
                   
                   <div className="col-span-2">
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Contacto </label>
-                    <select value={formData.contacto_id} onChange={(e) => setFormData({...formData, contacto_id: e.target.value})} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <label className="block text-sm font-medium text-slate-700 text-slate-300 mb-1">Contacto </label>
+                    <select value={formData.contacto_id} onChange={(e) => setFormData({...formData, contacto_id: e.target.value})} className="w-full px-3 py-2 border border-slate-300 border-slate-600 rounded-lg bg-slate-700 text-slate-900 text-white focus:ring-2 focus:ring-emerald-500 outline-none">
                       <option value="">Sin asignar (Opcional)</option>
                       {contactos?.map((contacto) => (
                         <option key={contacto.id} value={contacto.id}>
@@ -351,8 +351,8 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Servicio</label>
-                    <select value={formData.servicio} onChange={(e) => setFormData({...formData, servicio: e.target.value})} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <label className="block text-sm font-medium text-slate-700 text-slate-300 mb-1">Servicio</label>
+                    <select value={formData.servicio} onChange={(e) => setFormData({...formData, servicio: e.target.value})} className="w-full px-3 py-2 border border-slate-300 border-slate-600 rounded-lg bg-slate-700 text-slate-900 text-white focus:ring-2 focus:ring-emerald-500 outline-none">
                       <option>Consultoría</option>
                       <option>Interventoría</option>
                       <option>Gerencia de Proyectos</option>
@@ -361,18 +361,18 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Valor (COP)</label>
-                    <input type="number" value={formData.valor} onChange={(e) => setFormData({...formData, valor: e.target.value})} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej. 15000000" />
+                    <label className="block text-sm font-medium text-slate-700 text-slate-300 mb-1">Valor (COP)</label>
+                    <input type="number" value={formData.valor} onChange={(e) => setFormData({...formData, valor: e.target.value})} className="w-full px-3 py-2 border border-slate-300 border-slate-600 rounded-lg bg-slate-700 text-slate-900 text-white focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej. 15000000" />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Duración (Meses)</label>
-                    <input type="number" value={formData.duracion} onChange={(e) => setFormData({...formData, duracion: e.target.value})} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej. 6" />
+                    <label className="block text-sm font-medium text-slate-700 text-slate-300 mb-1">Duración (Meses)</label>
+                    <input type="number" value={formData.duracion} onChange={(e) => setFormData({...formData, duracion: e.target.value})} className="w-full px-3 py-2 border border-slate-300 border-slate-600 rounded-lg bg-slate-700 text-slate-900 text-white focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Ej. 6" />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Etapa Comercial</label>
-                    <select value={formData.etapa} onChange={(e) => setFormData({...formData, etapa: e.target.value})} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <label className="block text-sm font-medium text-slate-700 text-slate-300 mb-1">Etapa Comercial</label>
+                    <select value={formData.etapa} onChange={(e) => setFormData({...formData, etapa: e.target.value})} className="w-full px-3 py-2 border border-slate-300 border-slate-600 rounded-lg bg-slate-700 text-slate-900 text-white focus:ring-2 focus:ring-emerald-500 outline-none">
                       <option>Nuevo</option>
                       <option>Pliegos Borrador</option>
                       <option>Pliegos Definitivos</option>
@@ -381,8 +381,8 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Estado del Proyecto</label>
-                    <select value={formData.estado} onChange={(e) => setFormData({...formData, estado: e.target.value})} className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                    <label className="block text-sm font-medium text-slate-700 text-slate-300 mb-1">Estado del Proyecto</label>
+                    <select value={formData.estado} onChange={(e) => setFormData({...formData, estado: e.target.value})} className="w-full px-3 py-2 border border-slate-300 border-slate-600 rounded-lg bg-slate-700 text-slate-900 text-white focus:ring-2 focus:ring-emerald-500 outline-none">
                       <option value="Lead">Lead</option>
                       <option value="Publicado">Publicado</option>
                       <option value="Persiguiendo">Persiguiendo</option>
@@ -393,8 +393,8 @@ export default function VistaComercial({ pipeline, contactos, fetchPipeline }: {
                   </div>
                 </div>
                 
-                <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
-                  <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-slate-200 border-slate-700">
+                  <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 text-sm font-medium text-slate-700 text-slate-300 hover:bg-slate-100 hover:bg-slate-700 rounded-lg transition-colors">
                     Cancelar
                   </button>
                   <button type="submit" disabled={isSubmitting} className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-70">

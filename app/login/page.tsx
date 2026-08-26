@@ -37,12 +37,12 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 transition-colors duration-300 p-6">
+    <main className="min-h-screen flex items-center justify-center bg-slate-50 bg-slate-900 transition-colors duration-300 p-6">
       
       {/* Botón para volver al inicio */}
       <button 
         onClick={() => router.push("/")}
-        className="absolute top-8 left-8 text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors flex items-center gap-2"
+        className="absolute top-8 left-8 text-slate-500 hover:text-blue-600 text-slate-400 hover:text-blue-400 transition-colors flex items-center gap-2"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -54,7 +54,7 @@ export default function LoginPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 p-8"
+        className="w-full max-w-md bg-slate-800 rounded-2xl shadow-xl border border-slate-100 border-slate-700 p-8"
       >
         
         {/* Logo corporativo (Versión oscura permanente) */}
@@ -71,8 +71,8 @@ export default function LoginPage() {
         </div>
 
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Portal de Usuarios</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
+          <h2 className="text-2xl font-bold text-slate-900 text-white">Portal de Usuarios</h2>
+          <p className="text-sm text-slate-500 text-slate-400 mt-2">
             Ingresa con las credenciales proporcionadas por tu ingeniero asignado.
           </p>
         </div>
@@ -80,7 +80,7 @@ export default function LoginPage() {
         <form onSubmit={handleLogin} className="space-y-6">
           
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-slate-700 text-slate-300 mb-2">
               Correo Electrónico Corporativo
             </label>
             <input
@@ -88,13 +88,13 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-slate-900 dark:text-white"
+              className="w-full px-4 py-3 rounded-lg bg-slate-50 bg-slate-900 border border-slate-200 border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-slate-900 text-white"
               placeholder="cliente@empresa.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-slate-700 text-slate-300 mb-2">
               Contraseña
             </label>
             <input
@@ -102,7 +102,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-slate-900 dark:text-white"
+              className="w-full px-4 py-3 rounded-lg bg-slate-50 bg-slate-900 border border-slate-200 border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-slate-900 text-white"
               placeholder="••••••••"
             />
           </div>
@@ -110,7 +110,7 @@ export default function LoginPage() {
           {error && (
             <motion.p 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-              className="text-red-500 text-sm text-center bg-red-50 dark:bg-red-900/20 py-2 rounded-lg"
+              className="text-red-500 text-sm text-center bg-red-50 bg-red-900/20 py-2 rounded-lg"
             >
               {error}
             </motion.p>
