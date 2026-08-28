@@ -94,7 +94,7 @@ export default function Home() {
             Ingeniería que <span className="text-blue-500">Transforma</span>
           </h1>
           <p className="text-lg md:text-xl text-slate-300 mb-10">
-            Consultoría especializada para proyectos que exigen precisión, innovación y resultados reales.
+            Consultoría especializada para proyectos que exigen precisión, innovación y resultados.
           </p>
           
           {/* Botón Principal */}

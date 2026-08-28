@@ -21,6 +21,7 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
       return;
     }
 
+    // CAMBIO 1: Quitamos el ".eq('ingeniero_id', user.id)" para traer TODAS las obras
     const { data, error } = await supabase
       .from('proyectos_operativos')
       .select(`
@@ -29,7 +30,6 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
         productos_obra(*),
         facturas_obra(*)
       `)
-      .eq('ingeniero_id', user.id) 
       .order('created_at', { ascending: false });
 
     if (error) console.error("Error cargando obras:", error.message);
@@ -108,17 +108,18 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
 
   if (loading) return <p className="text-slate-500 animate-pulse mb-6">Cargando operaciones...</p>;
 
+  // Variable de apoyo para saber si el usuario activo es el dueño del proyecto abierto
+  const esDuenioActivo = proyectoActivo?.ingeniero_id === user?.id;
+
   return (
-    <> {/* ENVOLTURA PRINCIPAL CORREGIDA */}
-      
-      {/* ANIMACIÓN 1: Solo maneja el cambio entre el resumen y el detalle */}
+    <> 
       <AnimatePresence mode="wait">
         {!proyectoActivo ? (
           <motion.div key="resumen" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
               <div>
                 <h1 className="text-3xl font-bold text-white mb-2">Centro de Operaciones</h1>
-                <p className="text-slate-400">Resumen de proyectos activos a cargo y estado de ejecución.</p>
+                <p className="text-slate-400">Resumen de proyectos activos y estado de ejecución.</p>
               </div>
               <button 
                 onClick={() => { setEditId(null); setFormData({}); setModalTipo('proyecto'); }}
@@ -132,10 +133,7 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
             <div className="grid grid-cols-1 gap-4">
               {obras.length === 0 ? (
                 <div className="text-center p-12 bg-slate-800 rounded-xl border border-dashed border-slate-700">
-                  <p className="text-slate-400 mb-4">No tienes obras operativas asignadas actualmente.</p>
-                  <button onClick={() => { setEditId(null); setFormData({}); setModalTipo('proyecto'); }} className="text-orange-500 font-medium hover:underline">
-                    Crear mi primer proyecto
-                  </button>
+                  <p className="text-slate-400 mb-4">No hay obras operativas actualmente.</p>
                 </div>
               ) : (
                 obras.map((obra) => (
@@ -146,10 +144,14 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
                           <h3 className="text-lg font-bold text-white">{obra.nombre_proyecto || 'Sin Nombre'}</h3>
                           <p className="text-sm text-slate-400 mb-2">{obra.cliente || 'Cliente no especificado'} {obra.centro_costos && `| CC: ${obra.centro_costos}`}</p>
                         </div>
-                        <div className="flex gap-2">
-                          <button onClick={() => openEditModal('proyecto', obra)} className="p-1.5 text-slate-400 hover:text-blue-400 transition-colors bg-slate-700/50 hover:bg-slate-700 rounded-md"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg></button>
-                          <button onClick={() => handleDelete('proyectos_operativos', obra.id)} className="p-1.5 text-slate-400 hover:text-red-400 transition-colors bg-slate-700/50 hover:bg-slate-700 rounded-md"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
-                        </div>
+                        
+                        {/* CAMBIO 2: Ocultamos los botones de editar/borrar si no es el dueño */}
+                        {obra.ingeniero_id === user?.id && (
+                          <div className="flex gap-2">
+                            <button onClick={() => openEditModal('proyecto', obra)} className="p-1.5 text-slate-400 hover:text-blue-400 transition-colors bg-slate-700/50 hover:bg-slate-700 rounded-md"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg></button>
+                            <button onClick={() => handleDelete('proyectos_operativos', obra.id)} className="p-1.5 text-slate-400 hover:text-red-400 transition-colors bg-slate-700/50 hover:bg-slate-700 rounded-md"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
+                          </div>
+                        )}
                       </div>
                       
                       <div className="flex items-center gap-4 mb-3">
@@ -192,7 +194,10 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
                     <span className="p-1.5 bg-blue-900/30 text-blue-400 rounded-lg"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></span>
                     Legal
                   </h2>
-                  <button onClick={() => { setEditId(null); setFormData({}); setModalTipo('documento'); }} className="text-xs bg-blue-900/40 text-blue-400 hover:bg-blue-800/60 px-3 py-1.5 rounded-lg font-medium transition-colors">+ Añadir</button>
+                  {/* CAMBIO 3: Botón añadir oculto si no es dueño */}
+                  {esDuenioActivo && (
+                    <button onClick={() => { setEditId(null); setFormData({}); setModalTipo('documento'); }} className="text-xs bg-blue-900/40 text-blue-400 hover:bg-blue-800/60 px-3 py-1.5 rounded-lg font-medium transition-colors">+ Añadir</button>
+                  )}
                 </div>
                 <ul className="space-y-3">
                   {proyectoActivo.documentos_legales?.length === 0 && <p className="text-sm text-slate-400">No hay documentos registrados.</p>}
@@ -203,10 +208,13 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
                           <p className="font-semibold text-slate-200">{doc.tipo_documento}: <span className="font-normal text-slate-400">{doc.referencia}</span></p>
                           <p className="text-xs text-slate-400 mt-1">Vence: {doc.fecha_vencimiento || 'N/A'}</p>
                         </div>
-                        <div className="flex gap-2">
-                          <button onClick={() => openEditModal('documento', doc)} className="text-blue-400 hover:text-blue-300 text-xs font-medium">Editar</button>
-                          <button onClick={() => handleDelete('documentos_legales', doc.id)} className="text-red-400 hover:text-red-300 text-xs font-medium">X</button>
-                        </div>
+                        {/* CAMBIO 4: Botones edición de sub-ítems ocultos si no es dueño */}
+                        {esDuenioActivo && (
+                          <div className="flex gap-2">
+                            <button onClick={() => openEditModal('documento', doc)} className="text-blue-400 hover:text-blue-300 text-xs font-medium">Editar</button>
+                            <button onClick={() => handleDelete('documentos_legales', doc.id)} className="text-red-400 hover:text-red-300 text-xs font-medium">X</button>
+                          </div>
+                        )}
                       </div>
                     </li>
                   ))}
@@ -220,7 +228,9 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
                     <span className="p-1.5 bg-orange-900/30 text-orange-400 rounded-lg"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg></span>
                     Productos
                   </h2>
-                  <button onClick={() => { setEditId(null); setFormData({}); setModalTipo('producto'); }} className="text-xs bg-orange-900/40 text-orange-400 hover:bg-orange-800/60 px-3 py-1.5 rounded-lg font-medium transition-colors">+ Añadir</button>
+                  {esDuenioActivo && (
+                    <button onClick={() => { setEditId(null); setFormData({}); setModalTipo('producto'); }} className="text-xs bg-orange-900/40 text-orange-400 hover:bg-orange-800/60 px-3 py-1.5 rounded-lg font-medium transition-colors">+ Añadir</button>
+                  )}
                 </div>
                 <ul className="space-y-3">
                   {proyectoActivo.productos_obra?.length === 0 && <p className="text-sm text-slate-400">No hay productos registrados.</p>}
@@ -232,10 +242,12 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
                       </div>
                       <div className="flex flex-col items-end gap-1">
                         <span className="text-[10px] px-2 py-0.5 bg-slate-700 border border-slate-600 rounded text-slate-300">{prod.estado}</span>
-                        <div className="flex gap-2 mt-1">
-                          <button onClick={() => openEditModal('producto', prod)} className="text-orange-400 hover:text-orange-300 text-xs font-medium">Editar</button>
-                          <button onClick={() => handleDelete('productos_obra', prod.id)} className="text-red-400 hover:text-red-300 text-xs font-medium">X</button>
-                        </div>
+                        {esDuenioActivo && (
+                          <div className="flex gap-2 mt-1">
+                            <button onClick={() => openEditModal('producto', prod)} className="text-orange-400 hover:text-orange-300 text-xs font-medium">Editar</button>
+                            <button onClick={() => handleDelete('productos_obra', prod.id)} className="text-red-400 hover:text-red-300 text-xs font-medium">X</button>
+                          </div>
+                        )}
                       </div>
                     </li>
                   ))}
@@ -246,10 +258,12 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
               <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
                 <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-700">
                   <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                    <span className="p-1.5 bg-emerald-900/30 text-emerald-400 rounded-lg"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span>
+                    <span className="p-1.5 bg-emerald-900/30 text-emerald-400 rounded-lg"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08-.402-2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span>
                     Facturación
                   </h2>
-                  <button onClick={() => { setEditId(null); setFormData({}); setModalTipo('factura'); }} className="text-xs bg-emerald-900/40 text-emerald-400 hover:bg-emerald-800/60 px-3 py-1.5 rounded-lg font-medium transition-colors">+ Añadir</button>
+                  {esDuenioActivo && (
+                    <button onClick={() => { setEditId(null); setFormData({}); setModalTipo('factura'); }} className="text-xs bg-emerald-900/40 text-emerald-400 hover:bg-emerald-800/60 px-3 py-1.5 rounded-lg font-medium transition-colors">+ Añadir</button>
+                  )}
                 </div>
                 <ul className="space-y-3">
                   {proyectoActivo.facturas_obra?.length === 0 && <p className="text-sm text-slate-400">No hay facturas registradas.</p>}
@@ -263,10 +277,12 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
                         </div>
                         <div className="flex flex-col items-end gap-1">
                           <span className="text-[10px] px-2 py-0.5 bg-slate-700 rounded text-slate-300">{fac.estado}</span>
-                          <div className="flex gap-2 mt-1">
-                            <button onClick={() => openEditModal('factura', fac)} className="text-emerald-400 hover:text-emerald-300 text-xs font-medium">Editar</button>
-                            <button onClick={() => handleDelete('facturas_obra', fac.id)} className="text-red-400 hover:text-red-300 text-xs font-medium">X</button>
-                          </div>
+                          {esDuenioActivo && (
+                            <div className="flex gap-2 mt-1">
+                              <button onClick={() => openEditModal('factura', fac)} className="text-emerald-400 hover:text-emerald-300 text-xs font-medium">Editar</button>
+                              <button onClick={() => handleDelete('facturas_obra', fac.id)} className="text-red-400 hover:text-red-300 text-xs font-medium">X</button>
+                            </div>
+                          )}
                         </div>
                       </li>
                     );
