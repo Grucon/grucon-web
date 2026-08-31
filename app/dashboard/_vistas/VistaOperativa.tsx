@@ -3,44 +3,20 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
+import { useProyectosOperativos } from "@/utils/hooks/useProyectosOperativos";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: any }) {
-  const [obras, setObras] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { obras, loading, fetchObras: fetchMisObras } = useProyectosOperativos(user?.id);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [proyectoActivo, setProyectoActivo] = useState<any | null>(null);
 
   // Estados del Modal y CRUD
   const [modalTipo, setModalTipo] = useState<'proyecto' | 'documento' | 'producto' | 'factura' | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [formData, setFormData] = useState<any>({});
   const [editId, setEditId] = useState<number | null>(null); // null = Crear, number = Editar
-
-  const fetchMisObras = async () => {
-    if (!user?.id) {
-      setLoading(false);
-      return;
-    }
-
-    // CAMBIO 1: Quitamos el ".eq('ingeniero_id', user.id)" para traer TODAS las obras
-    const { data, error } = await supabase
-      .from('proyectos_operativos')
-      .select(`
-        *,
-        documentos_legales(*),
-        productos_obra(*),
-        facturas_obra(*)
-      `)
-      .order('created_at', { ascending: false });
-
-    if (error) console.error("Error cargando obras:", error.message);
-    else if (data) setObras(data);
-    
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchMisObras();
-  }, [user]);
 
   useEffect(() => {
     if (proyectoActivo) {

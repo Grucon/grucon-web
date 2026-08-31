@@ -4,13 +4,18 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
+import { useAuthPerfil } from "@/utils/hooks/useAuthPerfil";
+import DashboardHeader from "../_shared/DashboardHeader";
+
+const ROLES_AUTORIZADOS = ['comercial', 'directiva', 'directivo'];
 
 export default function DirectorioPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const { perfil, loading: loadingPerfil } = useAuthPerfil();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [contactos, setContactos] = useState<any[]>([]);
-  
+  const [loadingContactos, setLoadingContactos] = useState(true);
+
   // Estados del Modal
   const [editingContactoId, setEditingContactoId] = useState<number | null>(null);
   const [showContactoModal, setShowContactoModal] = useState(false);
@@ -22,25 +27,22 @@ export default function DirectorioPage() {
   const fetchContactos = async () => {
     const { data } = await supabase.from('directorio_comercial').select('*').order('nombre_completo', { ascending: true });
     if (data) setContactos(data);
+    setLoadingContactos(false);
   };
 
   useEffect(() => {
-    const checkAccess = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return router.push("/login");
+    if (loadingPerfil) return;
 
-      const { data: perfil } = await supabase.from("perfiles").select("rol").eq("uuid", session.user.id).single();
-      
-      // BLOQUEO DE SEGURIDAD: Solo entran comerciales y directivas
-      if (!perfil || !['comercial', 'directiva', 'directivo'].includes(perfil.rol)) {
-        return router.push("/dashboard");
-      }
-      
+    // BLOQUEO DE SEGURIDAD: Solo entran comerciales y directivas
+    if (!perfil || !ROLES_AUTORIZADOS.includes(perfil.rol)) {
+      router.push("/dashboard");
+      return;
+    }
+
+    (async () => {
       await fetchContactos();
-      setLoading(false);
-    };
-    checkAccess();
-  }, [router]);
+    })();
+  }, [loadingPerfil, perfil, router]);
 
   const resetContactoForm = () => {
     setEditingContactoId(null);
@@ -68,14 +70,13 @@ export default function DirectorioPage() {
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><p>Verificando permisos...</p></div>;
+  if (loadingPerfil || loadingContactos) return <div className="min-h-screen flex items-center justify-center"><p>Verificando permisos...</p></div>;
 
   return (
     <main className="min-h-screen bg-slate-50 bg-slate-900">
-      <header className=" bg-slate-800 border-b border-slate-200 border-slate-700 px-6 py-4 flex justify-between items-center">
-        <Image src="/Logo_GRUCON_dark.png" alt="Logo" width={100} height={30} priority />
+      <DashboardHeader>
         <button onClick={() => router.push("/dashboard")} className="text-sm px-4 py-2 bg-slate-100 bg-slate-700 rounded-lg">Volver al Dashboard</button>
-      </header>
+      </DashboardHeader>
 
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="flex justify-between items-end mb-6">
