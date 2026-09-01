@@ -12,7 +12,7 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
   const [proyectoActivo, setProyectoActivo] = useState<any | null>(null);
 
   // Estados del Modal y CRUD
-  const [modalTipo, setModalTipo] = useState<'proyecto' | 'documento' | 'producto' | 'factura' | null>(null);
+  const [modalTipo, setModalTipo] = useState<'proyecto' | 'documento' | 'producto' | 'factura' | 'gasto' | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [formData, setFormData] = useState<any>({});
@@ -49,6 +49,7 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
     else if (modalTipo === 'documento') tabla = 'documentos_legales';
     else if (modalTipo === 'producto') tabla = 'productos_obra';
     else if (modalTipo === 'factura') tabla = 'facturas_obra';
+    else if (modalTipo === 'gasto') tabla = 'gastos_obra';
 
     let payload = { ...formData };
     
@@ -86,6 +87,12 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
 
   // Variable de apoyo para saber si el usuario activo es el dueño del proyecto abierto
   const esDuenioActivo = proyectoActivo?.ingeniero_id === user?.id;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const totalFacturado = proyectoActivo?.facturas_obra?.reduce((acc: number, f: any) => acc + (Number(f.valor) || 0), 0) || 0;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const totalGastado = proyectoActivo?.gastos_obra?.reduce((acc: number, g: any) => acc + (Number(g.valor) || 0), 0) || 0;
+  const balanceProyecto = totalFacturado - totalGastado;
 
   return (
     <> 
@@ -139,6 +146,7 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
                         <span className="bg-slate-700 px-2 py-1 rounded">Docs: {obra.documentos_legales?.length || 0}</span>
                         <span className="bg-slate-700 px-2 py-1 rounded">Productos: {obra.productos_obra?.length || 0}</span>
                         <span className="bg-slate-700 px-2 py-1 rounded">Facturas: {obra.facturas_obra?.length || 0}</span>
+                        <span className="bg-slate-700 px-2 py-1 rounded">Gastos: {obra.gastos_obra?.length || 0}</span>
                       </div>
                     </div>
                     <button 
@@ -162,7 +170,22 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
               <p className="text-slate-400">Cliente: {proyectoActivo.cliente} | CC: {proyectoActivo.centro_costos || 'N/A'} | Estado: <span className="font-semibold text-orange-500">{proyectoActivo.estado}</span> | Avance: {proyectoActivo.avance_fisico}%</p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+              <div className="p-4 rounded-xl bg-emerald-900/10 border border-emerald-900/40">
+                <p className="text-xs font-medium text-emerald-400 uppercase tracking-wide">Total Facturado</p>
+                <p className="text-xl font-bold text-white mt-1">{formatDinero(totalFacturado)}</p>
+              </div>
+              <div className="p-4 rounded-xl bg-red-900/10 border border-red-900/40">
+                <p className="text-xs font-medium text-red-400 uppercase tracking-wide">Total Gastos</p>
+                <p className="text-xl font-bold text-white mt-1">{formatDinero(totalGastado)}</p>
+              </div>
+              <div className={`p-4 rounded-xl border ${balanceProyecto >= 0 ? 'bg-blue-900/10 border-blue-900/40' : 'bg-amber-900/10 border-amber-900/40'}`}>
+                <p className={`text-xs font-medium uppercase tracking-wide ${balanceProyecto >= 0 ? 'text-blue-400' : 'text-amber-400'}`}>Balance</p>
+                <p className="text-xl font-bold text-white mt-1">{formatDinero(balanceProyecto)}</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
               {/* 1. CONTRACTUAL (Documentos) */}
               <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
                 <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-700">
@@ -266,6 +289,41 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
                 </ul>
               </div>
 
+              {/* 4. FINANCIERO (Gastos) */}
+              <div className="bg-slate-800 rounded-xl border border-slate-700 p-6 border-t-4 border-t-red-500">
+                <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-700">
+                  <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                    <span className="p-1.5 bg-red-900/30 text-red-400 rounded-lg"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg></span>
+                    Gastos
+                  </h2>
+                  {esDuenioActivo && (
+                    <button onClick={() => { setEditId(null); setFormData({}); setModalTipo('gasto'); }} className="text-xs bg-red-900/40 text-red-400 hover:bg-red-800/60 px-3 py-1.5 rounded-lg font-medium transition-colors">+ Añadir</button>
+                  )}
+                </div>
+                <ul className="space-y-3">
+                  {proyectoActivo.gastos_obra?.length === 0 && <p className="text-sm text-slate-400">No hay gastos registrados.</p>}
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {proyectoActivo.gastos_obra?.map((gasto: any) => (
+                    <li key={gasto.id} className="text-sm border border-slate-700 p-3 rounded-lg flex justify-between items-center bg-slate-900/50">
+                      <div>
+                        <p className="font-bold text-red-400">{formatDinero(gasto.valor)}</p>
+                        <p className="text-xs text-slate-400 font-medium">{gasto.concepto}</p>
+                        <p className="text-xs text-slate-500 mt-0.5">{gasto.categoria} {gasto.fecha ? `| ${gasto.fecha}` : ''}</p>
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="text-[10px] px-2 py-0.5 bg-slate-700 rounded text-slate-300">{gasto.estado}</span>
+                        {esDuenioActivo && (
+                          <div className="flex gap-2 mt-1">
+                            <button onClick={() => openEditModal('gasto', gasto)} className="text-red-400 hover:text-red-300 text-xs font-medium">Editar</button>
+                            <button onClick={() => handleDelete('gastos_obra', gasto.id)} className="text-red-400 hover:text-red-300 text-xs font-medium">X</button>
+                          </div>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
             </div>
           </motion.div>
         )}
@@ -354,6 +412,41 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
                           <option key={prod.id} value={prod.id}>{prod.nombre}</option>
                         ))}
                       </select>
+                    </div>
+                  </>
+                )}
+
+                {modalTipo === 'gasto' && (
+                  <>
+                    <div><label className="block text-sm mb-1 font-medium text-slate-300">Concepto</label><input type="text" required value={formData.concepto || ''} className="w-full px-3 py-2 border border-slate-600 rounded-lg bg-slate-700 text-white outline-none" onChange={(e)=>setFormData({...formData, concepto: e.target.value})} placeholder="Ej. Compra de cemento" /></div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm mb-1 font-medium text-slate-300">Categoría</label>
+                        <select value={formData.categoria || 'Otros'} className="w-full px-3 py-2 border border-slate-600 rounded-lg bg-slate-700 text-white outline-none" onChange={(e)=>setFormData({...formData, categoria: e.target.value})}>
+                          <option value="Materiales">Materiales</option>
+                          <option value="Mano de obra">Mano de obra</option>
+                          <option value="Transporte">Transporte</option>
+                          <option value="Equipos">Equipos</option>
+                          <option value="Otros">Otros</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm mb-1 font-medium text-slate-300">Valor (COP)</label>
+                        <input type="number" required value={formData.valor || ''} className="w-full px-3 py-2 border border-slate-600 rounded-lg bg-slate-700 text-white outline-none" onChange={(e)=>setFormData({...formData, valor: e.target.value})} />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm mb-1 font-medium text-slate-300">Fecha</label>
+                        <input type="date" value={formData.fecha || ''} className="w-full px-3 py-2 border border-slate-600 rounded-lg bg-slate-700 text-white outline-none" onChange={(e)=>setFormData({...formData, fecha: e.target.value})} />
+                      </div>
+                      <div>
+                        <label className="block text-sm mb-1 font-medium text-slate-300">Estado</label>
+                        <select value={formData.estado || 'Pendiente'} className="w-full px-3 py-2 border border-slate-600 rounded-lg bg-slate-700 text-white outline-none" onChange={(e)=>setFormData({...formData, estado: e.target.value})}>
+                          <option value="Pendiente">Pendiente</option>
+                          <option value="Pagado">Pagado</option>
+                        </select>
+                      </div>
                     </div>
                   </>
                 )}

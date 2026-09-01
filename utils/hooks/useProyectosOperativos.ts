@@ -23,7 +23,8 @@ export function useProyectosOperativos(userId?: string) {
         *,
         documentos_legales(*),
         productos_obra(*),
-        facturas_obra(*)
+        facturas_obra(*),
+        gastos_obra(*)
       `)
       .order('created_at', { ascending: false });
 

@@ -13,6 +13,7 @@ export function usePermisoModulo(modulo: ModuloKey) {
   const router = useRouter();
   const [autorizado, setAutorizado] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     let activo = true;
@@ -20,6 +21,7 @@ export function usePermisoModulo(modulo: ModuloKey) {
     const checkAccess = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return router.push("/login");
+      if (activo) setUserId(session.user.id);
 
       const { data: perfil } = await supabase
         .from("perfiles")
@@ -53,5 +55,5 @@ export function usePermisoModulo(modulo: ModuloKey) {
     return () => { activo = false; };
   }, [router, modulo]);
 
-  return { autorizado, loading };
+  return { autorizado, loading, userId };
 }
