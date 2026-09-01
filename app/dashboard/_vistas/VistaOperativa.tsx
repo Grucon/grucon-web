@@ -36,7 +36,21 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
   const openEditModal = (tipo: any, item: any) => {
     setModalTipo(tipo);
     setEditId(item.id);
-    setFormData(item);
+    if (tipo === 'proyecto') {
+      // 'item' viene con relaciones anidadas (documentos_legales, productos_obra,
+      // facturas_obra) y el campo calculado gasto_contable, que no son columnas
+      // de proyectos_operativos: si se mandan tal cual en el update, Supabase
+      // lo rechaza. Solo tomamos los campos editables reales de la tabla.
+      setFormData({
+        nombre_proyecto: item.nombre_proyecto,
+        cliente: item.cliente,
+        centro_costos: item.centro_costos,
+        avance_fisico: item.avance_fisico,
+        estado: item.estado,
+      });
+    } else {
+      setFormData(item);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -87,10 +101,12 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
   // Variable de apoyo para saber si el usuario activo es el dueño del proyecto abierto
   const esDuenioActivo = proyectoActivo?.ingeniero_id === user?.id;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const totalFacturado = proyectoActivo?.facturas_obra?.reduce((acc: number, f: any) => acc + (Number(f.valor) || 0), 0) || 0;
+  // Balance 100% contable (Ingresos - Gastos), acumulado desde el inicio del
+  // proyecto por centro de costo. `facturas_obra` sigue existiendo como
+  // registro manual de facturación, pero ya no alimenta este balance.
+  const totalIngresos = Number(proyectoActivo?.ingresos_contables) || 0;
   const totalGastado = Number(proyectoActivo?.gasto_contable) || 0;
-  const balanceProyecto = totalFacturado - totalGastado;
+  const balanceProyecto = Number(proyectoActivo?.balance_contable) || (totalIngresos - totalGastado);
 
   return (
     <> 
@@ -144,7 +160,9 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
                         <span className="bg-slate-700 px-2 py-1 rounded">Docs: {obra.documentos_legales?.length || 0}</span>
                         <span className="bg-slate-700 px-2 py-1 rounded">Productos: {obra.productos_obra?.length || 0}</span>
                         <span className="bg-slate-700 px-2 py-1 rounded">Facturas: {obra.facturas_obra?.length || 0}</span>
-                        <span className="bg-slate-700 px-2 py-1 rounded">Gasto Contable: {formatDinero(Number(obra.gasto_contable) || 0)}</span>
+                        <span className={`px-2 py-1 rounded ${(Number(obra.balance_contable) || 0) >= 0 ? 'bg-blue-900/30 text-blue-400' : 'bg-amber-900/30 text-amber-400'}`}>
+                          Balance Contable: {formatDinero(Number(obra.balance_contable) || 0)}
+                        </span>
                       </div>
                     </div>
                     <button 
@@ -170,15 +188,15 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
               <div className="p-4 rounded-xl bg-emerald-900/10 border border-emerald-900/40">
-                <p className="text-xs font-medium text-emerald-400 uppercase tracking-wide">Total Facturado</p>
-                <p className="text-xl font-bold text-white mt-1">{formatDinero(totalFacturado)}</p>
+                <p className="text-xs font-medium text-emerald-400 uppercase tracking-wide">Ingresos Contables</p>
+                <p className="text-xl font-bold text-white mt-1">{formatDinero(totalIngresos)}</p>
               </div>
               <div className="p-4 rounded-xl bg-red-900/10 border border-red-900/40">
                 <p className="text-xs font-medium text-red-400 uppercase tracking-wide">Gasto Contable</p>
                 <p className="text-xl font-bold text-white mt-1">{formatDinero(totalGastado)}</p>
               </div>
               <div className={`p-4 rounded-xl border ${balanceProyecto >= 0 ? 'bg-blue-900/10 border-blue-900/40' : 'bg-amber-900/10 border-amber-900/40'}`}>
-                <p className={`text-xs font-medium uppercase tracking-wide ${balanceProyecto >= 0 ? 'text-blue-400' : 'text-amber-400'}`}>Balance</p>
+                <p className={`text-xs font-medium uppercase tracking-wide ${balanceProyecto >= 0 ? 'text-blue-400' : 'text-amber-400'}`}>Balance (desde el inicio del proyecto)</p>
                 <p className="text-xl font-bold text-white mt-1">{formatDinero(balanceProyecto)}</p>
               </div>
             </div>
@@ -287,21 +305,32 @@ export default function VistaOperativa({ perfil, user }: { perfil?: any, user?: 
                 </ul>
               </div>
 
-              {/* 4. FINANCIERO (Gasto Contable, solo lectura desde Contabilidad) */}
+              {/* 4. FINANCIERO (Contabilidad real, solo lectura, acumulada desde el inicio del proyecto) */}
               <div className="bg-slate-800 rounded-xl border border-slate-700 p-6 border-t-4 border-t-red-500">
                 <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-700">
                   <h2 className="text-lg font-bold text-white flex items-center gap-2">
                     <span className="p-1.5 bg-red-900/30 text-red-400 rounded-lg"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg></span>
-                    Gasto Contable
+                    Contabilidad
                   </h2>
                 </div>
                 {proyectoActivo.centro_costos ? (
-                  <div className="text-center py-4">
-                    <p className="text-3xl font-bold text-red-400">{formatDinero(totalGastado)}</p>
-                    <p className="text-xs text-slate-400 mt-2">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-slate-400">Ingresos</span>
+                      <span className="font-semibold text-emerald-400">{formatDinero(totalIngresos)}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-slate-400">Gastos</span>
+                      <span className="font-semibold text-red-400">{formatDinero(totalGastado)}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm pt-2 border-t border-slate-700">
+                      <span className="text-slate-300 font-medium">Balance</span>
+                      <span className={`font-bold ${balanceProyecto >= 0 ? 'text-blue-400' : 'text-amber-400'}`}>{formatDinero(balanceProyecto)}</span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-4">
                       Centro de costo: <span className="text-slate-300 font-medium">{proyectoActivo.centro_costos}</span>
                     </p>
-                    <p className="text-[11px] text-slate-500 mt-3">Fuente: módulo de Contabilidad (libro auxiliar importado).</p>
+                    <p className="text-[11px] text-slate-500">Acumulado desde el inicio del proyecto. Fuente: módulo de Contabilidad (libro auxiliar importado).</p>
                   </div>
                 ) : (
                   <p className="text-sm text-slate-400">

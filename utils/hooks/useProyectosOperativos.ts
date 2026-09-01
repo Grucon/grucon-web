@@ -17,7 +17,7 @@ export function useProyectosOperativos(userId?: string) {
       return;
     }
 
-    const [{ data, error }, { data: gastosContables, error: errorGastos }] = await Promise.all([
+    const [{ data, error }, { data: movimientosContables, error: errorMovimientos }] = await Promise.all([
       supabase
         .from('proyectos_operativos')
         .select(`
@@ -27,17 +27,22 @@ export function useProyectosOperativos(userId?: string) {
           facturas_obra(*)
         `)
         .order('created_at', { ascending: false }),
-      supabase.from('gastos_contables_por_proyecto').select('*'),
+      supabase.from('movimientos_contables_por_proyecto').select('*'),
     ]);
 
     if (error) console.error("Error cargando obras:", error.message);
-    if (errorGastos) console.error("Error cargando gasto contable:", errorGastos.message);
+    if (errorMovimientos) console.error("Error cargando movimientos contables:", errorMovimientos.message);
 
-    const obrasConGasto = (data ?? []).map((obra) => ({
-      ...obra,
-      gasto_contable: gastosContables?.find((g) => g.proyecto_id === obra.id)?.gasto_contable ?? 0,
-    }));
-    setObras(obrasConGasto);
+    const obrasConContabilidad = (data ?? []).map((obra) => {
+      const mov = movimientosContables?.find((m) => m.proyecto_id === obra.id);
+      return {
+        ...obra,
+        ingresos_contables: mov?.ingresos_contables ?? 0,
+        gasto_contable: mov?.gasto_contable ?? 0,
+        balance_contable: mov?.balance_contable ?? 0,
+      };
+    });
+    setObras(obrasConContabilidad);
 
     setLoading(false);
   };
