@@ -17,19 +17,27 @@ export function useProyectosOperativos(userId?: string) {
       return;
     }
 
-    const { data, error } = await supabase
-      .from('proyectos_operativos')
-      .select(`
-        *,
-        documentos_legales(*),
-        productos_obra(*),
-        facturas_obra(*),
-        gastos_obra(*)
-      `)
-      .order('created_at', { ascending: false });
+    const [{ data, error }, { data: gastosContables, error: errorGastos }] = await Promise.all([
+      supabase
+        .from('proyectos_operativos')
+        .select(`
+          *,
+          documentos_legales(*),
+          productos_obra(*),
+          facturas_obra(*)
+        `)
+        .order('created_at', { ascending: false }),
+      supabase.from('gastos_contables_por_proyecto').select('*'),
+    ]);
 
     if (error) console.error("Error cargando obras:", error.message);
-    else setObras(data ?? []);
+    if (errorGastos) console.error("Error cargando gasto contable:", errorGastos.message);
+
+    const obrasConGasto = (data ?? []).map((obra) => ({
+      ...obra,
+      gasto_contable: gastosContables?.find((g) => g.proyecto_id === obra.id)?.gasto_contable ?? 0,
+    }));
+    setObras(obrasConGasto);
 
     setLoading(false);
   };
